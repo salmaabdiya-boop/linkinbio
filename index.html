@@ -1,1 +1,174 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>LinkNode | Creator Bio</title>
+    <style>
+        :root {
+            --primary: #000000;
+            --bg: #ffffff;
+            --secondary: #f3f3f1;
+            --accent: #00dd3e;
+            --text: #1e1e1e;
+            --gray: #666;
+        }
 
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Inter', -apple-system, sans-serif; }
+        body { background-color: var(--bg); color: var(--text); overflow-x: hidden; }
+
+        /* Navigation */
+        nav { display: flex; justify-content: space-between; align-items: center; padding: 1.5rem 5%; }
+        .logo { font-weight: 800; font-size: 1.5rem; letter-spacing: -1px; cursor: pointer; }
+
+        /* Views Layout */
+        .view { display: none; min-height: 100vh; padding: 20px; animation: fadeIn 0.3s ease; }
+        .view.active { display: block; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+
+        /* UI Components */
+        .container { max-width: 600px; margin: 0 auto; }
+        .hero { text-align: center; padding: 80px 20px; }
+        .hero h1 { font-size: 3.5rem; font-weight: 900; line-height: 1.1; margin-bottom: 20px; }
+        
+        .btn { padding: 14px 28px; border-radius: 50px; text-decoration: none; font-weight: 600; 
+               display: inline-block; border: none; cursor: pointer; transition: 0.2s; text-align: center; }
+        .btn-black { background: var(--primary); color: white; width: 100%; }
+        .btn-black:hover { opacity: 0.8; }
+        .btn-outline { border: 1px solid #ddd; background: transparent; width: 100%; margin-top: 10px; }
+
+        input { padding: 14px; border-radius: 12px; border: 1px solid #ddd; width: 100%; margin-bottom: 15px; font-size: 1rem; }
+
+        /* Dashboard Items */
+        .link-item { background: var(--secondary); padding: 15px; border-radius: 16px; margin-bottom: 12px; 
+                     display: flex; justify-content: space-between; align-items: center; }
+        .controls button { background: white; border: 1px solid #ddd; padding: 5px 10px; border-radius: 6px; cursor: pointer; }
+
+        /* Public Profile Style */
+        .profile-card { text-align: center; padding-top: 40px; }
+        .avatar { width: 96px; height: 96px; background: #eee; border-radius: 50%; margin: 0 auto 15px; }
+        .bio-link { display: block; background: var(--primary); color: white; padding: 18px; 
+                    border-radius: 50px; margin-bottom: 12px; text-decoration: none; font-weight: 500; }
+    </style>
+</head>
+<body>
+
+    <nav id="main-nav">
+        <div class="logo" onclick="showView('landing')">LinkNode</div>
+        <div>
+            <button class="btn" style="padding: 8px 20px" onclick="showView('dashboard')">Dashboard</button>
+        </div>
+    </nav>
+
+    <section id="landing" class="view active">
+        <div class="hero">
+            <h1>The only link you'll ever need.</h1>
+            <p style="margin-bottom: 30px; color: var(--gray);">Connect your TikTok, Instagram, Twitter, and more in one beautiful page.</p>
+            <div class="container" style="max-width: 400px;">
+                <button class="btn btn-black" onclick="showView('dashboard')">Get Started for Free</button>
+            </div>
+        </div>
+    </section>
+
+    <section id="dashboard" class="view">
+        <div class="container">
+            <h2 style="margin-bottom: 20px;">Admin Panel</h2>
+            <div style="background: #fff; border: 1px solid #eee; padding: 20px; border-radius: 20px; margin-bottom: 30px;">
+                <input type="text" id="linkTitle" placeholder="Link Title (e.g., Portfolio)">
+                <input type="url" id="linkUrl" placeholder="URL (https://...)">
+                <button class="btn btn-black" onclick="addLink()">Add New Link</button>
+            </div>
+            
+            <div id="links-list"></div>
+            
+            <button class="btn btn-outline" onclick="showView('profile')">Preview Public Page →</button>
+        </div>
+    </section>
+
+    <section id="profile" class="view">
+        <div class="container profile-card">
+            <div class="avatar"></div>
+            <h2 style="margin-bottom: 5px;">@CreatorName</h2>
+            <p style="color: var(--gray); margin-bottom: 30px;">Welcome to my official links</p>
+            
+            <div id="public-links-container"></div>
+            
+            <button class="btn btn-outline" style="width: auto; margin-top: 50px;" onclick="showView('dashboard')">← Back to Editor</button>
+        </div>
+    </section>
+
+    <script>
+        // --- State Management ---
+        let links = JSON.parse(localStorage.getItem('node_links')) || [];
+
+        function showView(viewId) {
+            document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
+            document.getElementById(viewId).classList.add('active');
+            
+            // Hide nav on public profile to simulate real user experience
+            document.getElementById('main-nav').style.display = (viewId === 'profile') ? 'none' : 'flex';
+            
+            if(viewId === 'dashboard') renderDashboard();
+            if(viewId === 'profile') renderProfile();
+        }
+
+        function addLink() {
+            const title = document.getElementById('linkTitle').value;
+            const url = document.getElementById('linkUrl').value;
+            
+            if(!title || !url) return alert("Please enter both title and URL");
+            
+            links.push({ id: Date.now(), title, url });
+            save();
+            document.getElementById('linkTitle').value = '';
+            document.getElementById('linkUrl').value = '';
+        }
+
+        function deleteLink(id) {
+            links = links.filter(l => l.id !== id);
+            save();
+        }
+
+        function move(index, step) {
+            if (index + step < 0 || index + step >= links.length) return;
+            const item = links.splice(index, 1)[0];
+            links.splice(index + step, 0, item);
+            save();
+        }
+
+        function save() {
+            localStorage.setItem('node_links', JSON.stringify(links));
+            renderDashboard();
+        }
+
+        // --- Rendering ---
+        function renderDashboard() {
+            const container = document.getElementById('links-list');
+            container.innerHTML = links.map((link, i) => `
+                <div class="link-item">
+                    <div>
+                        <strong>${link.title}</strong><br>
+                        <small style="color: var(--gray)">${link.url}</small>
+                    </div>
+                    <div class="controls">
+                        <button onclick="move(${i}, -1)">↑</button>
+                        <button onclick="move(${i}, 1)">↓</button>
+                        <button onclick="deleteLink(${link.id})" style="border-color: #ffcccc; color: red;">✕</button>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        function renderProfile() {
+            const container = document.getElementById('public-links-container');
+            if (links.length === 0) {
+                container.innerHTML = '<p>No links added yet.</p>';
+                return;
+            }
+            container.innerHTML = links.map(link => `
+                <a href="${link.url}" target="_blank" class="bio-link">${link.title}</a>
+            `).join('');
+        }
+    </script>
+</body>
+</html>

@@ -3,198 +3,257 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>LinkNode | My Cute Bio</title>
+    <title>LinkNode | Your Digital Home</title>
     <style>
         :root {
-            --primary: #ff85a2; /* Default Pink */
-            --bg: #fff5f7;
-            --card: #ffffff;
-            --text: #4a4a4a;
+            --accent: #ff007a;
+            --glass: rgba(255, 255, 255, 0.8);
+            --grad: linear-gradient(135deg, #feb2b2 0%, #d6bcfa 50%, #81e6d9 100%);
         }
 
-        /* Themes */
-        body.theme-pink { --primary: #ff85a2; --bg: #fff5f7; }
-        body.theme-blue { --primary: #85d7ff; --bg: #f5faff; }
-        body.theme-mint { --primary: #85ffc7; --bg: #f5fff9; }
-        body.theme-purple { --primary: #b085ff; --bg: #f8f5ff; }
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Inter', sans-serif; }
 
-        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', Roboto, sans-serif; }
-        body { background-color: var(--bg); color: var(--text); transition: background 0.3s ease; }
+        body { 
+            background: var(--grad);
+            background-size: 400% 400%;
+            animation: gradientBG 15s ease infinite;
+            min-height: 100vh;
+            color: #2d3748;
+        }
 
-        nav { display: flex; justify-content: space-between; align-items: center; padding: 1rem 5%; background: white; border-bottom: 2px solid rgba(0,0,0,0.05); }
-        .logo { font-weight: 800; color: var(--primary); font-size: 1.4rem; cursor: pointer; }
+        @keyframes gradientBG {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
 
-        .view { display: none; min-height: 100vh; padding: 20px; animation: slideUp 0.4s ease; }
+        /* Views Control */
+        .view { display: none; padding: 40px 20px; animation: fadeIn 0.5s ease forwards; }
         .view.active { display: block; }
-        @keyframes slideUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
 
-        .container { max-width: 500px; margin: 0 auto; }
-        
-        /* Dashboard Styling */
-        .card { background: white; padding: 25px; border-radius: 24px; box-shadow: 0 10px 25px rgba(0,0,0,0.05); margin-bottom: 20px; }
-        h3 { margin-bottom: 15px; font-size: 1.1rem; opacity: 0.8; }
+        @keyframes fadeIn { from { opacity: 0; transform: scale(0.98); } to { opacity: 1; transform: scale(1); } }
 
-        .input-group { margin-bottom: 15px; }
-        label { display: block; font-size: 0.8rem; font-weight: 700; margin-bottom: 5px; text-transform: uppercase; letter-spacing: 1px; }
-        input { padding: 12px; border-radius: 12px; border: 2px solid #eee; width: 100%; outline: none; transition: 0.2s; }
-        input:focus { border-color: var(--primary); }
+        /* Glass Cards */
+        .glass-card {
+            background: var(--glass);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255,255,255,0.3);
+            border-radius: 30px;
+            padding: 30px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+            max-width: 450px;
+            margin: 0 auto;
+        }
 
-        .btn { padding: 14px; border-radius: 50px; border: none; font-weight: 700; cursor: pointer; transition: 0.3s; width: 100%; }
-        .btn-main { background: var(--primary); color: white; box-shadow: 0 4px 15px rgba(0,0,0,0.1); }
-        .btn-main:hover { transform: scale(1.02); filter: brightness(1.05); }
-        
-        /* Color Swatches */
-        .theme-picker { display: flex; gap: 10px; margin-bottom: 20px; }
-        .swatch { width: 35px; height: 35px; border-radius: 50%; cursor: pointer; border: 3px solid white; box-shadow: 0 2px 5px rgba(0,0,0,0.1); }
+        /* Inputs & Buttons */
+        input {
+            width: 100%;
+            padding: 15px;
+            margin-bottom: 15px;
+            border-radius: 15px;
+            border: none;
+            background: rgba(255,255,255,0.9);
+            box-shadow: inset 0 2px 4px rgba(0,0,0,0.05);
+            font-size: 1rem;
+        }
 
-        /* Public Profile */
-        .profile-header { text-align: center; margin-bottom: 30px; }
-        .profile-pic-circle { width: 100px; height: 100px; border-radius: 50%; object-fit: cover; border: 4px solid white; box-shadow: 0 5px 15px rgba(0,0,0,0.1); margin-bottom: 15px; }
-        .bio-link { display: block; background: white; color: var(--text); padding: 16px; border-radius: 16px; 
-                    margin-bottom: 12px; text-decoration: none; font-weight: 600; text-align: center;
-                    box-shadow: 0 4px 10px rgba(0,0,0,0.03); border: 1px solid rgba(0,0,0,0.05); transition: 0.2s; }
-        .bio-link:hover { transform: translateY(-3px); box-shadow: 0 6px 15px rgba(0,0,0,0.08); }
+        .btn-glow {
+            background: #000;
+            color: white;
+            padding: 15px;
+            border-radius: 50px;
+            width: 100%;
+            border: none;
+            font-weight: 700;
+            cursor: pointer;
+            transition: 0.3s;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
 
-        .link-item { background: #fafafa; padding: 12px; border-radius: 12px; margin-bottom: 10px; display: flex; justify-content: space-between; align-items: center; }
+        .btn-glow:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 10px 20px rgba(0,0,0,0.2);
+        }
+
+        /* Profile Styles */
+        .pfp-preview {
+            width: 100px; height: 100px;
+            border-radius: 50%;
+            margin: 0 auto 20px;
+            background: #eee;
+            object-fit: cover;
+            border: 5px solid white;
+        }
+
+        .link-pill {
+            display: block;
+            background: #000;
+            color: white;
+            padding: 18px;
+            border-radius: 50px;
+            margin-bottom: 15px;
+            text-decoration: none;
+            text-align: center;
+            font-weight: 600;
+            transition: 0.2s;
+        }
+
+        .link-pill:hover { background: #333; transform: scale(1.02); }
+
+        .nav-header { text-align: center; margin-bottom: 30px; cursor: pointer; }
     </style>
 </head>
-<body class="theme-pink">
+<body>
 
-    <nav id="navbar">
-        <div class="logo" onclick="showView('landing')">✿ LinkNode</div>
-        <button class="btn" style="width: auto; padding: 8px 15px;" onclick="showView('dashboard')">Edit My Page</button>
-    </nav>
-
-    <section id="landing" class="view active">
-        <div class="container" style="text-align:center; padding-top: 60px;">
-            <h1 style="font-size: 3rem; margin-bottom: 15px;">Make it yours.</h1>
-            <p style="margin-bottom: 30px;">A cute home for all your links.</p>
-            <button class="btn btn-main" onclick="showView('dashboard')">Start Creating ✨</button>
+    <section id="view-auth" class="view active">
+        <div class="nav-header">
+            <h1 style="font-size: 2.5rem; letter-spacing: -2px;">LinkNode</h1>
+        </div>
+        <div class="glass-card">
+            <h2 style="margin-bottom: 20px; text-align: center;">Welcome, love</h2>
+            <input type="email" id="auth-email" placeholder="Email address">
+            <input type="password" id="auth-pass" placeholder="Create Password">
+            <button class="btn-glow" onclick="handleAuth()">Create Account & Start</button>
+            <p style="text-align: center; margin-top: 15px; font-size: 0.8rem; color: #666;">
+                By joining, you're claiming your digital corner.
+            </p>
         </div>
     </section>
 
-    <section id="dashboard" class="view">
-        <div class="container">
-            <div class="card">
-                <h3>Profile Info</h3>
-                <div class="input-group">
-                    <label>Display Name</label>
-                    <input type="text" id="userName" placeholder="e.g. Sunny Pixie" oninput="updateProfileData()">
-                </div>
-                <div class="input-group">
-                    <label>Profile Picture URL</label>
-                    <input type="text" id="userPic" placeholder="https://image-link.com" oninput="updateProfileData()">
-                </div>
-                <label>Choose Theme</label>
-                <div class="theme-picker">
-                    <div class="swatch" style="background: #ff85a2;" onclick="setTheme('theme-pink')"></div>
-                    <div class="swatch" style="background: #85d7ff;" onclick="setTheme('theme-blue')"></div>
-                    <div class="swatch" style="background: #85ffc7;" onclick="setTheme('theme-mint')"></div>
-                    <div class="swatch" style="background: #b085ff;" onclick="setTheme('theme-purple')"></div>
-                </div>
+    <section id="view-dash" class="view">
+        <div class="glass-card">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+                <h3>Your Account</h3>
+                <button onclick="logout()" style="background: none; border: none; cursor: pointer; font-weight: bold; color: var(--accent);">Logout</button>
             </div>
 
-            <div class="card">
-                <h3>Add Links</h3>
-                <input type="text" id="linkTitle" placeholder="Link Title">
-                <input type="url" id="linkUrl" placeholder="https://...">
-                <button class="btn btn-main" onclick="addLink()">Add Link +</button>
-            </div>
+            <label style="font-weight: bold; font-size: 0.8rem;">PROFILE PHOTO URL</label>
+            <input type="text" id="setup-pic" placeholder="Link to your photo" oninput="syncProfile()">
+            
+            <label style="font-weight: bold; font-size: 0.8rem;">DISPLAY NAME</label>
+            <input type="text" id="setup-name" placeholder="Your Name" oninput="syncProfile()">
 
-            <div id="dashboard-links"></div>
-            <button class="btn" style="background: #eee;" onclick="showView('profile')">View Live Page ✨</button>
+            <hr style="margin: 20px 0; border: none; border-top: 1px solid #ddd;">
+
+            <label style="font-weight: bold; font-size: 0.8rem;">ADD A NEW LINK</label>
+            <input type="text" id="link-title" placeholder="Platform Name (e.g. Instagram)">
+            <input type="url" id="link-url" placeholder="https://...">
+            <button class="btn-glow" style="background: var(--accent);" onclick="addLink()">Add Link +</button>
+
+            <div id="dash-links-list" style="margin-top: 20px;"></div>
+            
+            <button class="btn-glow" style="margin-top: 20px; background: #fff; color: #000; border: 2px solid #000;" onclick="showView('view-profile')">View Public Profile ✨</button>
         </div>
     </section>
 
-    <section id="profile" class="view">
-        <div class="container">
-            <div class="profile-header">
-                <img id="display-pic" src="https://via.placeholder.com/100" class="profile-pic-circle">
-                <h2 id="display-name">Your Name</h2>
-            </div>
-            <div id="profile-links-list"></div>
-            <div style="text-align: center; margin-top: 40px;">
-                <button class="btn" style="width: auto; background: rgba(0,0,0,0.05);" onclick="showView('dashboard')">Edit This Page</button>
-            </div>
+    <section id="view-profile" class="view">
+        <div class="glass-card" style="text-align: center;">
+            <img id="pub-pic" src="" class="pfp-preview">
+            <h2 id="pub-name" style="margin-bottom: 30px;"></h2>
+            
+            <div id="pub-links-container"></div>
+            
+            <button onclick="showView('view-dash')" style="margin-top: 40px; background:none; border:none; color:#666; cursor:pointer; text-decoration: underline;">Back to Editing</button>
         </div>
     </section>
 
     <script>
-        // Data State
-        let appData = JSON.parse(localStorage.getItem('cute_links_data')) || {
-            name: "New Creator",
-            pic: "https://api.dicebear.com/7.x/adventurer/svg?seed=Lucky",
-            theme: "theme-pink",
-            links: []
-        };
+        let currentUser = null;
+        let db = JSON.parse(localStorage.getItem('ln_accounts')) || {};
 
-        function showView(viewId) {
+        function showView(id) {
             document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
-            document.getElementById(viewId).classList.add('active');
-            document.getElementById('navbar').style.display = (viewId === 'profile') ? 'none' : 'flex';
-            if(viewId === 'dashboard') renderDashboard();
-            if(viewId === 'profile') renderProfile();
+            document.getElementById(id).classList.add('active');
+            if(id === 'view-profile') renderPublic();
         }
 
-        function setTheme(themeName) {
-            document.body.className = themeName;
-            appData.theme = themeName;
-            save();
+        // --- ACCOUNT LOGIC ---
+        function handleAuth() {
+            const email = document.getElementById('auth-email').value;
+            const pass = document.getElementById('auth-pass').value;
+
+            if(!email || !pass) return alert("Please fill both, love.");
+
+            if(!db[email]) {
+                // Register new account
+                db[email] = {
+                    password: pass,
+                    profile: { name: "New User", pic: "https://api.dicebear.com/7.x/avataaars/svg?seed=Felix" },
+                    links: []
+                };
+            } else if(db[email].password !== pass) {
+                return alert("Wrong password!");
+            }
+
+            currentUser = email;
+            saveDB();
+            loadDashboard();
+            showView('view-dash');
         }
 
-        function updateProfileData() {
-            appData.name = document.getElementById('userName').value;
-            appData.pic = document.getElementById('userPic').value;
-            save();
+        function logout() {
+            currentUser = null;
+            showView('view-auth');
+        }
+
+        // --- CONTENT LOGIC ---
+        function syncProfile() {
+            db[currentUser].profile.name = document.getElementById('setup-name').value;
+            db[currentUser].profile.pic = document.getElementById('setup-pic').value;
+            saveDB();
         }
 
         function addLink() {
-            const t = document.getElementById('linkTitle');
-            const u = document.getElementById('linkUrl');
-            if(!t.value || !u.value) return alert("Add a title and URL!");
-            appData.links.push({ id: Date.now(), title: t.value, url: u.value });
-            t.value = ''; u.value = '';
-            save();
-            renderDashboard();
+            const title = document.getElementById('link-title').value;
+            const url = document.getElementById('link-url').value;
+            if(!title || !url) return;
+
+            db[currentUser].links.push({ title, url, id: Date.now() });
+            document.getElementById('link-title').value = '';
+            document.getElementById('link-url').value = '';
+            saveDB();
+            renderDashLinks();
         }
 
         function deleteLink(id) {
-            appData.links = appData.links.filter(l => l.id !== id);
-            save();
-            renderDashboard();
+            db[currentUser].links = db[currentUser].links.filter(l => l.id !== id);
+            saveDB();
+            renderDashLinks();
         }
 
-        function save() {
-            localStorage.setItem('cute_links_data', JSON.stringify(appData));
+        function saveDB() {
+            localStorage.setItem('ln_accounts', JSON.stringify(db));
         }
 
-        function renderDashboard() {
-            document.getElementById('userName').value = appData.name;
-            document.getElementById('userPic').value = appData.pic;
-            document.body.className = appData.theme;
-            
-            const list = document.getElementById('dashboard-links');
-            list.innerHTML = appData.links.map(l => `
-                <div class="link-item">
+        // --- RENDERING ---
+        function loadDashboard() {
+            const user = db[currentUser];
+            document.getElementById('setup-name').value = user.profile.name;
+            document.getElementById('setup-pic').value = user.profile.pic;
+            renderDashLinks();
+        }
+
+        function renderDashLinks() {
+            const list = document.getElementById('dash-links-list');
+            list.innerHTML = db[currentUser].links.map(l => `
+                <div style="background: white; padding: 10px; border-radius: 10px; margin-bottom: 8px; display: flex; justify-content: space-between;">
                     <span>${l.title}</span>
-                    <button onclick="deleteLink(${l.id})" style="background:none; border:none; color:red; cursor:pointer;">✕</button>
+                    <button onclick="deleteLink(${l.id})" style="color:red; background:none; border:none; cursor:pointer;">✕</button>
                 </div>
             `).join('');
         }
 
-        function renderProfile() {
-            document.getElementById('display-name').innerText = appData.name || "Anon Creator";
-            document.getElementById('display-pic').src = appData.pic || "https://via.placeholder.com/100";
-            document.body.className = appData.theme;
-
-            const list = document.getElementById('profile-links-list');
-            list.innerHTML = appData.links.map(l => `
-                <a href="${l.url}" target="_blank" class="bio-link">${l.title}</a>
+        function renderPublic() {
+            const user = db[currentUser];
+            document.getElementById('pub-name').innerText = user.profile.name;
+            document.getElementById('pub-pic').src = user.profile.pic;
+            
+            const container = document.getElementById('pub-links-container');
+            container.innerHTML = user.links.map(l => `
+                <a href="${l.url}" target="_blank" class="link-pill">${l.title}</a>
             `).join('');
         }
-
-        // Initialize
-        window.onload = renderDashboard;
     </script>
 </body>
 </html>

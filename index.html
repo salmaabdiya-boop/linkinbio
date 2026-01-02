@@ -3,255 +3,214 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>LinkNode | Your Digital Home</title>
+    <title>LinkNode | Creator Suite</title>
     <style>
         :root {
-            --accent: #ff007a;
-            --glass: rgba(255, 255, 255, 0.8);
-            --grad: linear-gradient(135deg, #feb2b2 0%, #d6bcfa 50%, #81e6d9 100%);
+            --primary: #6e45e2;
+            --secondary: #88d3ce;
+            --glass: rgba(255, 255, 255, 0.9);
+            --text: #2d3436;
         }
 
         * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Inter', sans-serif; }
 
         body { 
-            background: var(--grad);
-            background-size: 400% 400%;
-            animation: gradientBG 15s ease infinite;
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            background-attachment: fixed;
             min-height: 100vh;
-            color: #2d3748;
+            color: var(--text);
         }
 
-        @keyframes gradientBG {
-            0% { background-position: 0% 50%; }
-            50% { background-position: 100% 50%; }
-            100% { background-position: 0% 50%; }
-        }
-
-        /* Views Control */
-        .view { display: none; padding: 40px 20px; animation: fadeIn 0.5s ease forwards; }
+        /* Views */
+        .view { display: none; padding: 40px 20px; animation: fadeInUp 0.5s ease; }
         .view.active { display: block; }
+        @keyframes fadeInUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
 
-        @keyframes fadeIn { from { opacity: 0; transform: scale(0.98); } to { opacity: 1; transform: scale(1); } }
+        .container { max-width: 480px; margin: 0 auto; }
 
-        /* Glass Cards */
+        /* Modern Glass UI */
         .glass-card {
             background: var(--glass);
             backdrop-filter: blur(10px);
-            border: 1px solid rgba(255,255,255,0.3);
-            border-radius: 30px;
+            border-radius: 32px;
             padding: 30px;
-            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
-            max-width: 450px;
-            margin: 0 auto;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.15);
+            border: 1px solid rgba(255,255,255,0.4);
         }
 
         /* Inputs & Buttons */
-        input {
-            width: 100%;
-            padding: 15px;
-            margin-bottom: 15px;
-            border-radius: 15px;
-            border: none;
-            background: rgba(255,255,255,0.9);
-            box-shadow: inset 0 2px 4px rgba(0,0,0,0.05);
-            font-size: 1rem;
+        .input-box {
+            width: 100%; padding: 14px; margin-bottom: 12px;
+            border-radius: 14px; border: 1px solid #dfe6e9;
+            background: white; font-size: 1rem; transition: 0.2s;
         }
+        .input-box:focus { outline: none; border-color: var(--primary); box-shadow: 0 0 0 3px rgba(110, 69, 226, 0.1); }
 
-        .btn-glow {
-            background: #000;
-            color: white;
-            padding: 15px;
-            border-radius: 50px;
-            width: 100%;
-            border: none;
-            font-weight: 700;
-            cursor: pointer;
-            transition: 0.3s;
-            text-transform: uppercase;
-            letter-spacing: 1px;
+        .btn-action {
+            background: #000; color: white; padding: 16px; border-radius: 50px;
+            width: 100%; border: none; font-weight: 700; cursor: pointer;
+            margin-top: 10px; transition: 0.3s;
         }
+        .btn-action:hover { transform: scale(1.02); box-shadow: 0 10px 20px rgba(0,0,0,0.1); }
 
-        .btn-glow:hover {
-            transform: translateY(-3px);
-            box-shadow: 0 10px 20px rgba(0,0,0,0.2);
-        }
-
-        /* Profile Styles */
-        .pfp-preview {
-            width: 100px; height: 100px;
-            border-radius: 50%;
-            margin: 0 auto 20px;
-            background: #eee;
-            object-fit: cover;
-            border: 5px solid white;
-        }
-
+        /* Profile & Links */
+        .pfp-wrapper { text-align: center; margin-bottom: 20px; position: relative; }
+        .pfp-img { width: 110px; height: 110px; border-radius: 50%; object-fit: cover; border: 4px solid white; background: #eee; }
+        
         .link-pill {
-            display: block;
-            background: #000;
-            color: white;
-            padding: 18px;
-            border-radius: 50px;
-            margin-bottom: 15px;
-            text-decoration: none;
-            text-align: center;
-            font-weight: 600;
-            transition: 0.2s;
+            display: flex; align-items: center; background: white; 
+            padding: 12px; border-radius: 20px; margin-bottom: 12px;
+            text-decoration: none; color: inherit; transition: 0.3s;
+            border: 1px solid rgba(0,0,0,0.05);
         }
+        .link-pill:hover { transform: scale(1.03); background: #fafafa; }
+        .link-thumb { width: 45px; height: 45px; border-radius: 12px; object-fit: cover; margin-right: 15px; background: #eee; }
+        .link-text { font-weight: 600; font-size: 1.05rem; }
 
-        .link-pill:hover { background: #333; transform: scale(1.02); }
-
-        .nav-header { text-align: center; margin-bottom: 30px; cursor: pointer; }
+        .dashboard-item { background: rgba(0,0,0,0.03); padding: 12px; border-radius: 15px; margin-bottom: 10px; display: flex; align-items: center; justify-content: space-between; }
     </style>
 </head>
 <body>
 
-    <section id="view-auth" class="view active">
-        <div class="nav-header">
-            <h1 style="font-size: 2.5rem; letter-spacing: -2px;">LinkNode</h1>
-        </div>
-        <div class="glass-card">
-            <h2 style="margin-bottom: 20px; text-align: center;">Welcome, love</h2>
-            <input type="email" id="auth-email" placeholder="Email address">
-            <input type="password" id="auth-pass" placeholder="Create Password">
-            <button class="btn-glow" onclick="handleAuth()">Create Account & Start</button>
-            <p style="text-align: center; margin-top: 15px; font-size: 0.8rem; color: #666;">
-                By joining, you're claiming your digital corner.
-            </p>
-        </div>
-    </section>
-
-    <section id="view-dash" class="view">
-        <div class="glass-card">
-            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
-                <h3>Your Account</h3>
-                <button onclick="logout()" style="background: none; border: none; cursor: pointer; font-weight: bold; color: var(--accent);">Logout</button>
+    <section id="auth" class="view active">
+        <div class="container">
+            <div class="glass-card">
+                <h1 style="text-align:center; margin-bottom: 25px;">LinkNode</h1>
+                <input type="email" id="email" class="input-box" placeholder="Email">
+                <input type="password" id="pass" class="input-box" placeholder="Password">
+                <button class="btn-action" onclick="auth()">Login / Sign Up</button>
             </div>
-
-            <label style="font-weight: bold; font-size: 0.8rem;">PROFILE PHOTO URL</label>
-            <input type="text" id="setup-pic" placeholder="Link to your photo" oninput="syncProfile()">
-            
-            <label style="font-weight: bold; font-size: 0.8rem;">DISPLAY NAME</label>
-            <input type="text" id="setup-name" placeholder="Your Name" oninput="syncProfile()">
-
-            <hr style="margin: 20px 0; border: none; border-top: 1px solid #ddd;">
-
-            <label style="font-weight: bold; font-size: 0.8rem;">ADD A NEW LINK</label>
-            <input type="text" id="link-title" placeholder="Platform Name (e.g. Instagram)">
-            <input type="url" id="link-url" placeholder="https://...">
-            <button class="btn-glow" style="background: var(--accent);" onclick="addLink()">Add Link +</button>
-
-            <div id="dash-links-list" style="margin-top: 20px;"></div>
-            
-            <button class="btn-glow" style="margin-top: 20px; background: #fff; color: #000; border: 2px solid #000;" onclick="showView('view-profile')">View Public Profile ✨</button>
         </div>
     </section>
 
-    <section id="view-profile" class="view">
-        <div class="glass-card" style="text-align: center;">
-            <img id="pub-pic" src="" class="pfp-preview">
-            <h2 id="pub-name" style="margin-bottom: 30px;"></h2>
+    <section id="dash" class="view">
+        <div class="container">
+            <div class="glass-card">
+                <div style="display:flex; justify-content:space-between; margin-bottom:20px;">
+                    <h3>My Account</h3>
+                    <button onclick="logout()" style="border:none; background:none; color:red; cursor:pointer;">Logout</button>
+                </div>
+
+                <div class="pfp-wrapper">
+                    <img id="dash-pfp" class="pfp-img" src="https://api.dicebear.com/7.x/shapes/svg?seed=1">
+                    <input type="text" id="user-pfp-url" class="input-box" style="margin-top:10px;" placeholder="Paste Photo URL" oninput="updateUser()">
+                    <input type="text" id="user-name" class="input-box" placeholder="Your Display Name" oninput="updateUser()">
+                </div>
+
+                <hr style="margin:20px 0; opacity:0.1;">
+
+                <h4>Add Link</h4>
+                <input type="text" id="l-title" class="input-box" placeholder="Title (e.g. My Shop)">
+                <input type="url" id="l-url" class="input-box" placeholder="URL (https://...)">
+                <input type="text" id="l-thumb" class="input-box" placeholder="Thumbnail Image URL (Optional)">
+                <button class="btn-action" style="background:var(--primary);" onclick="addLink()">Add Link +</button>
+
+                <div id="dash-links" style="margin-top:20px;"></div>
+                <button class="btn-action" style="background:#fff; color:#000; border:1px solid #000;" onclick="show('profile')">Preview Public Profile</button>
+            </div>
+        </div>
+    </section>
+
+    <section id="profile" class="view">
+        <div class="container" style="text-align:center;">
+            <img id="pub-pfp" class="pfp-img" src="">
+            <h2 id="pub-name" style="margin: 15px 0 30px 0; color: white; text-shadow: 0 2px 10px rgba(0,0,0,0.2);"></h2>
             
-            <div id="pub-links-container"></div>
+            <div id="pub-links"></div>
             
-            <button onclick="showView('view-dash')" style="margin-top: 40px; background:none; border:none; color:#666; cursor:pointer; text-decoration: underline;">Back to Editing</button>
+            <button onclick="show('dash')" style="margin-top:40px; color:white; background:none; border:none; cursor:pointer; opacity:0.7;">← Back to Editor</button>
         </div>
     </section>
 
     <script>
         let currentUser = null;
-        let db = JSON.parse(localStorage.getItem('ln_accounts')) || {};
+        let storage = JSON.parse(localStorage.getItem('linknode_v3')) || {};
 
-        function showView(id) {
+        function show(id) {
             document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
             document.getElementById(id).classList.add('active');
-            if(id === 'view-profile') renderPublic();
+            if(id === 'profile') renderProfile();
         }
 
-        // --- ACCOUNT LOGIC ---
-        function handleAuth() {
-            const email = document.getElementById('auth-email').value;
-            const pass = document.getElementById('auth-pass').value;
+        function auth() {
+            const email = document.getElementById('email').value;
+            const pass = document.getElementById('pass').value;
+            if(!email || !pass) return;
 
-            if(!email || !pass) return alert("Please fill both, love.");
-
-            if(!db[email]) {
-                // Register new account
-                db[email] = {
-                    password: pass,
-                    profile: { name: "New User", pic: "https://api.dicebear.com/7.x/avataaars/svg?seed=Felix" },
-                    links: []
-                };
-            } else if(db[email].password !== pass) {
-                return alert("Wrong password!");
+            if(!storage[email]) {
+                storage[email] = { pass, name: "New Creator", pfp: "https://api.dicebear.com/7.x/micah/svg?seed=1", links: [] };
+            } else if (storage[email].pass !== pass) {
+                return alert("Wrong password");
             }
 
             currentUser = email;
-            saveDB();
-            loadDashboard();
-            showView('view-dash');
+            save();
+            loadDash();
+            show('dash');
         }
 
-        function logout() {
-            currentUser = null;
-            showView('view-auth');
-        }
+        function logout() { currentUser = null; show('auth'); }
 
-        // --- CONTENT LOGIC ---
-        function syncProfile() {
-            db[currentUser].profile.name = document.getElementById('setup-name').value;
-            db[currentUser].profile.pic = document.getElementById('setup-pic').value;
-            saveDB();
+        function updateUser() {
+            storage[currentUser].name = document.getElementById('user-name').value;
+            storage[currentUser].pfp = document.getElementById('user-pfp-url').value;
+            document.getElementById('dash-pfp').src = storage[currentUser].pfp;
+            save();
         }
 
         function addLink() {
-            const title = document.getElementById('link-title').value;
-            const url = document.getElementById('link-url').value;
+            const title = document.getElementById('l-title').value;
+            const url = document.getElementById('l-url').value;
+            const thumb = document.getElementById('l-thumb').value || "https://api.dicebear.com/7.x/initials/svg?seed=" + title;
+            
             if(!title || !url) return;
-
-            db[currentUser].links.push({ title, url, id: Date.now() });
-            document.getElementById('link-title').value = '';
-            document.getElementById('link-url').value = '';
-            saveDB();
+            storage[currentUser].links.push({ title, url, thumb, id: Date.now() });
+            save();
             renderDashLinks();
+            document.getElementById('l-title').value = '';
+            document.getElementById('l-url').value = '';
+            document.getElementById('l-thumb').value = '';
         }
 
         function deleteLink(id) {
-            db[currentUser].links = db[currentUser].links.filter(l => l.id !== id);
-            saveDB();
+            storage[currentUser].links = storage[currentUser].links.filter(l => l.id !== id);
+            save();
             renderDashLinks();
         }
 
-        function saveDB() {
-            localStorage.setItem('ln_accounts', JSON.stringify(db));
-        }
+        function save() { localStorage.setItem('linknode_v3', JSON.stringify(storage)); }
 
-        // --- RENDERING ---
-        function loadDashboard() {
-            const user = db[currentUser];
-            document.getElementById('setup-name').value = user.profile.name;
-            document.getElementById('setup-pic').value = user.profile.pic;
+        function loadDash() {
+            const user = storage[currentUser];
+            document.getElementById('user-name').value = user.name;
+            document.getElementById('user-pfp-url').value = user.pfp;
+            document.getElementById('dash-pfp').src = user.pfp;
             renderDashLinks();
         }
 
         function renderDashLinks() {
-            const list = document.getElementById('dash-links-list');
-            list.innerHTML = db[currentUser].links.map(l => `
-                <div style="background: white; padding: 10px; border-radius: 10px; margin-bottom: 8px; display: flex; justify-content: space-between;">
-                    <span>${l.title}</span>
-                    <button onclick="deleteLink(${l.id})" style="color:red; background:none; border:none; cursor:pointer;">✕</button>
+            const list = document.getElementById('dash-links');
+            list.innerHTML = storage[currentUser].links.map(l => `
+                <div class="dashboard-item">
+                    <div style="display:flex; align-items:center;">
+                        <img src="${l.thumb}" style="width:30px; height:30px; border-radius:5px; margin-right:10px; object-fit:cover;">
+                        <span>${l.title}</span>
+                    </div>
+                    <button onclick="deleteLink(${l.id})" style="color:red; border:none; background:none; cursor:pointer;">✕</button>
                 </div>
             `).join('');
         }
 
-        function renderPublic() {
-            const user = db[currentUser];
-            document.getElementById('pub-name').innerText = user.profile.name;
-            document.getElementById('pub-pic').src = user.profile.pic;
-            
-            const container = document.getElementById('pub-links-container');
+        function renderProfile() {
+            const user = storage[currentUser];
+            document.getElementById('pub-pfp').src = user.pfp;
+            document.getElementById('pub-name').innerText = user.name;
+            const container = document.getElementById('pub-links');
             container.innerHTML = user.links.map(l => `
-                <a href="${l.url}" target="_blank" class="link-pill">${l.title}</a>
+                <a href="${l.url}" target="_blank" class="link-pill">
+                    <img src="${l.thumb}" class="link-thumb">
+                    <span class="link-text">${l.title}</span>
+                </a>
             `).join('');
         }
     </script>

@@ -3,179 +3,222 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>LinkNode Pro | Create Your Identity</title>
+    <title>Link Haven | Link-in-Bio</title>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <style>
         :root {
-            --primary: #000;
-            --glass: rgba(255, 255, 255, 0.95);
-            --bg-grad: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+            --primary: #3ecf8e; /* Supabase Green */
+            --bg: #f4f4f7;
+            --card: #ffffff;
+            --text: #1c1c1c;
         }
 
-        /* Themes */
-        body.theme-sunset { --bg-grad: linear-gradient(45deg, #ff9a9e 0%, #fad0c4 99%, #fad0c4 100%); }
-        body.theme-ocean { --bg-grad: linear-gradient(to top, #4481eb 0%, #04befe 100%); }
-        body.theme-midnight { --bg-grad: linear-gradient(to right, #434343 0%, #000000 100%); }
-        body.theme-bloom { --bg-grad: linear-gradient(to top, #fccb90 0%, #d57eeb 100%); }
-
-        * { box-sizing: border-box; margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; }
-
-        body { 
-            background: var(--bg-grad); 
-            background-attachment: fixed; 
-            min-height: 100vh; 
-            transition: all 0.5s ease;
-            color: #1a1a1a;
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            background-color: var(--bg);
+            color: var(--text);
+            margin: 0;
+            display: flex;
+            justify-content: center;
+            padding: 20px;
         }
 
-        .view { display: none; padding: 20px; animation: slideUp 0.4s ease; }
-        .view.active { display: block; }
-        @keyframes slideUp { from { opacity: 0; transform: translateY(30px); } to { opacity: 1; transform: translateY(0); } }
-
-        .container { max-width: 450px; margin: 0 auto; }
-
-        /* Glass Cards */
-        .card {
-            background: var(--glass);
-            backdrop-filter: blur(15px);
-            border-radius: 28px;
-            padding: 25px;
-            box-shadow: 0 15px 35px rgba(0,0,0,0.1);
-            margin-bottom: 20px;
+        .container {
+            width: 100%;
+            max-width: 450px;
+            background: var(--card);
+            padding: 2rem;
+            border-radius: 16px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.05);
         }
 
-        /* Forms */
-        h2 { font-weight: 800; margin-bottom: 20px; letter-spacing: -1px; }
+        h1 { text-align: center; margin-bottom: 1rem; }
+        .hidden { display: none !important; }
+
+        /* Buttons & Inputs */
         input {
-            width: 100%; padding: 15px; margin-bottom: 12px;
-            border-radius: 15px; border: 1px solid #eee;
-            background: #f9f9f9; font-size: 1rem;
+            width: 100%;
+            padding: 12px;
+            margin: 8px 0;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            box-sizing: border-box;
         }
 
-        .btn {
-            width: 100%; padding: 16px; border-radius: 50px;
-            border: none; font-weight: 700; cursor: pointer;
-            transition: 0.3s; font-size: 1rem;
-        }
-        .btn-black { background: #000; color: #fff; }
-        .btn-black:active { transform: scale(0.96); }
-
-        /* Photo Upload */
-        .photo-upload-label {
-            display: block; width: 120px; height: 120px;
-            margin: 0 auto 15px; background: #eee;
-            border-radius: 50%; cursor: pointer;
-            overflow: hidden; border: 4px solid #fff;
-            position: relative;
-        }
-        .photo-upload-label img { width: 100%; height: 100%; object-fit: cover; }
-        .photo-upload-label span {
-            position: absolute; bottom: 0; width: 100%; background: rgba(0,0,0,0.5);
-            color: white; font-size: 10px; padding: 4px 0; text-align: center;
+        button {
+            width: 100%;
+            padding: 12px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: opacity 0.2s;
+            margin-top: 8px;
         }
 
-        /* Color Swatches */
-        .swatch-group { display: flex; gap: 10px; margin: 15px 0; justify-content: center; }
-        .swatch { width: 40px; height: 40px; border-radius: 50%; cursor: pointer; border: 3px solid white; box-shadow: 0 4px 10px rgba(0,0,0,0.1); }
+        .btn-primary { background: var(--primary); color: white; }
+        .btn-outline { background: transparent; border: 1px solid #ddd; }
+        .btn-danger { background: #ff4d4d; color: white; margin-top: 4px; padding: 6px; font-size: 12px;}
 
-        /* Public Link Style */
-        .link-pill {
-            display: flex; align-items: center; background: #fff;
-            padding: 12px; border-radius: 20px; margin-bottom: 12px;
-            text-decoration: none; color: #000; font-weight: 600;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+        /* Links List */
+        .link-item {
+            border: 1px solid #eee;
+            padding: 12px;
+            border-radius: 8px;
+            margin-bottom: 10px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
         }
-        .link-icon { width: 40px; height: 40px; border-radius: 10px; margin-right: 15px; object-fit: cover; }
+
+        .public-link {
+            display: block;
+            background: #eee;
+            padding: 15px;
+            margin: 10px 0;
+            text-decoration: none;
+            color: var(--text);
+            border-radius: 10px;
+            text-align: center;
+            font-weight: 500;
+        }
     </style>
 </head>
-<body class="theme-sunset">
+<body>
 
-    <section id="view-auth" class="view active">
-        <div class="container" style="padding-top: 60px;">
-            <div class="card">
-                <h2 style="text-align: center;">linknode.</h2>
-                <p style="text-align:center; margin-bottom: 20px; color: #666;">Use your Gmail to continue</p>
-                <input type="email" id="auth-email" placeholder="email@gmail.com">
-                <input type="password" id="auth-pass" placeholder="Password">
-                <button class="btn btn-black" onclick="handleAuth()">Continue</button>
-            </div>
+<div class="container">
+    <h1>Link Haven</h1>
+
+    <div id="auth-section">
+        <input type="email" id="email" placeholder="Email">
+        <input type="password" id="password" placeholder="Password">
+        <button class="btn-primary" onclick="signUp()">Sign Up</button>
+        <button class="btn-outline" onclick="signIn()">Login</button>
+        <hr>
+        <button class="btn-outline" onclick="signInWithGoogle()">Login with Google</button>
+    </div>
+
+    <div id="app-section" class="hidden">
+        <div style="display:flex; justify-content: space-between; align-items: center;">
+            <p id="user-greet"></p>
+            <button class="btn-outline" style="width: auto;" onclick="signOut()">Logout</button>
         </div>
-    </section>
 
-    <section id="view-dash" class="view">
-        <div class="container">
-            <div class="card">
-                <div style="display:flex; justify-content: space-between; align-items: center;">
-                    <h3>Profile Editor</h3>
-                    <button onclick="logout()" style="border:none; background:none; color:red; font-weight:bold;">Exit</button>
-                </div>
-                
-                <div style="text-align: center; margin-top: 20px;">
-                    <label class="photo-upload-label">
-                        <input type="file" id="pfp-input" hidden accept="image/*" onchange="processImage(this, 'pfp-preview')">
-                        <img id="pfp-preview" src="https://via.placeholder.com/150">
-                        <span>CHANGE</span>
-                    </label>
-                    <input type="text" id="user-name" placeholder="Display Name" oninput="updateProfile()">
-                </div>
+        <hr>
 
-                <div class="swatch-group">
-                    <div class="swatch" style="background: linear-gradient(45deg, #ff9a9e, #fad0c4);" onclick="setTheme('theme-sunset')"></div>
-                    <div class="swatch" style="background: linear-gradient(to top, #4481eb, #04befe);" onclick="setTheme('theme-ocean')"></div>
-                    <div class="swatch" style="background: linear-gradient(to right, #434343, #000000);" onclick="setTheme('theme-midnight')"></div>
-                    <div class="swatch" style="background: linear-gradient(to top, #fccb90, #d57eeb);" onclick="setTheme('theme-bloom')"></div>
-                </div>
-            </div>
+        <h3>Add a Link</h3>
+        <input type="text" id="link-title" placeholder="Title (e.g. My Instagram)">
+        <input type="url" id="link-url" placeholder="URL (https://...)">
+        <button class="btn-primary" onclick="addLink()">Add Link</button>
 
-            <div class="card">
-                <h4>Add New Link</h4>
-                <div style="display: flex; gap: 10px; align-items: center; margin-top: 10px;">
-                    <label style="width: 50px; height: 50px; background: #eee; border-radius: 10px; cursor: pointer; flex-shrink: 0;">
-                        <input type="file" id="link-icon-input" hidden accept="image/*" onchange="processImage(this, 'icon-preview')">
-                        <img id="icon-preview" src="https://via.placeholder.com/50" style="width: 100%; height: 100%; border-radius: 10px; object-fit: cover;">
-                    </label>
-                    <input type="text" id="link-title" placeholder="Platform (e.g. TikTok)" style="margin:0">
-                </div>
-                <input type="url" id="link-url" placeholder="Paste URL" style="margin-top:10px;">
-                <button class="btn btn-black" onclick="addLink()">Save Link</button>
-            </div>
+        <hr>
+        <h3>Your Links</h3>
+        <div id="links-container"></div>
+    </div>
+</div>
 
-            <div id="dash-links-list"></div>
-            <button class="btn btn-black" style="background: #fff; color: #000; border: 2px solid #000;" onclick="showView('view-profile')">Preview Public View ✨</button>
-        </div>
-    </section>
+<script>
+    // 1. INITIALIZE SUPABASE
+    const SUPABASE_URL = "https://lvqyzfazmjpjjyavjady.supabase.co";
+    const SUPABASE_KEY = "YOUR_ANON_PUBLIC_KEY"; // Paste your actual key here
+    const supabase = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
-    <section id="view-profile" class="view">
-        <div class="container" style="text-align: center;">
-            <img id="pub-pfp" src="" style="width: 100px; height: 100px; border-radius: 50%; border: 4px solid white; box-shadow: 0 10px 20px rgba(0,0,0,0.1);">
-            <h2 id="pub-name" style="margin: 15px 0 30px 0; color: #fff; text-shadow: 0 2px 10px rgba(0,0,0,0.3);"></h2>
-            
-            <div id="pub-links-container"></div>
-            
-            <button onclick="showView('view-dash')" style="margin-top: 40px; color: white; background: rgba(0,0,0,0.2); border: none; padding: 10px 20px; border-radius: 20px;">Edit My Page</button>
-        </div>
-    </section>
+    // DOM Elements
+    const authSection = document.getElementById('auth-section');
+    const appSection = document.getElementById('app-section');
+    const linksContainer = document.getElementById('links-container');
 
-    <script>
-        let currentUser = null;
-        let db = JSON.parse(localStorage.getItem('linknode_pro_db')) || {};
+    // 2. AUTHENTICATION LOGIC
+    async function signUp() {
+        const email = document.getElementById('email').value;
+        const password = document.getElementById('password').value;
+        const { error } = await supabase.auth.signUp({ email, password });
+        if (error) alert(error.message);
+        else alert("Check your email for confirmation!");
+    }
 
-        function showView(id) {
-            document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
-            document.getElementById(id).classList.add('active');
-            if(id === 'view-profile') renderPublic();
+    async function signIn() {
+        const email = document.getElementById('email').value;
+        const password = document.getElementById('password').value;
+        const { error } = await supabase.auth.signInWithPassword({ email, password });
+        if (error) alert(error.message);
+    }
+
+    async function signInWithGoogle() {
+        await supabase.auth.signInWithOAuth({ provider: 'google' });
+    }
+
+    async function signOut() {
+        await supabase.auth.signOut();
+    }
+
+    // 3. DATA PERSISTENCE (CRUD)
+    async function addLink() {
+        const title = document.getElementById('link-title').value;
+        const url = document.getElementById('link-url').value;
+        const user = (await supabase.auth.getUser()).data.user;
+
+        if (!title || !url) return alert("Please fill both fields");
+
+        const { error } = await supabase
+            .from('links') // Make sure you have a table named 'links'
+            .insert([{ title, url, user_id: user.id }]);
+
+        if (error) alert(error.message);
+        else {
+            document.getElementById('link-title').value = '';
+            document.getElementById('link-url').value = '';
+            fetchLinks();
         }
+    }
 
-        // --- AUTH ---
-        function handleAuth() {
-            const email = document.getElementById('auth-email').value;
-            const pass = document.getElementById('auth-pass').value;
-            if(!email.includes('@')) return alert("Enter a valid Gmail, love.");
+    async function fetchLinks() {
+        const user = (await supabase.auth.getUser()).data.user;
+        const { data: links, error } = await supabase
+            .from('links')
+            .select('*')
+            .eq('user_id', user.id)
+            .order('created_at', { ascending: false });
 
-            if(!db[email]) {
-                db[email] = { pass, name: "New Creator", pfp: "", theme: "theme-sunset", links: [] };
-            } else if(db[email].pass !== pass) {
-                return alert("Wrong password!");
-            }
-            currentUser = email;
-            save();
-            initDash();
+        if (error) console.log(error);
+        else renderLinks(links);
+    }
+
+    async function deleteLink(id) {
+        const { error } = await supabase.from('links').delete().eq('id', id);
+        if (error) alert(error.message);
+        else fetchLinks();
+    }
+
+    function renderLinks(links) {
+        linksContainer.innerHTML = '';
+        links.forEach(link => {
+            const div = document.createElement('div');
+            div.className = 'link-item';
+            div.innerHTML = `
+                <div>
+                    <strong>${link.title}</strong><br>
+                    <small>${link.url}</small>
+                </div>
+                <button class="btn-danger" onclick="deleteLink('${link.id}')">Delete</button>
+            `;
+            linksContainer.appendChild(div);
+        });
+    }
+
+    // 4. SESSION LISTENER (Handle UI Changes)
+    supabase.auth.onAuthStateChange((event, session) => {
+        if (session) {
+            authSection.classList.add('hidden');
+            appSection.classList.remove('hidden');
+            document.getElementById('user-greet').innerText = `Hey, ${session.user.email}`;
+            fetchLinks();
+        } else {
+            authSection.classList.remove('hidden');
+            appSection.classList.add('hidden');
+        }
+    });
+</script>
+
+</body>
+</html>
